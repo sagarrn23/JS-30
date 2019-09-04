@@ -1,3 +1,2 @@
 # JS-30
-JS Tasks
-Tasks by wesbos javascript 30
+JS tasks by wesbos javascript 30
