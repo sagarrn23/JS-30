@@ -17,22 +17,16 @@
         </ul>
     </form>
     <script>
-        const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
-
-        let cities = [];
-            fetch(endpoint)
-                .then(data => data.json())
-                .then(data => {
-                    cities.push(...data)
-                });
-
-        const searchHandler = (e) => {
-            const searchQuery = e.target.value;
-            const results = cities.filter(arr => {
+        const searchResults = (searchQuery, cities) => {
+            return cities.filter(place => {
                 const regex = new RegExp(searchQuery, 'gi');
-                return arr.state.match(regex) || arr.city.match(regex)
+                return place.state.match(regex) || place.city.match(regex)
             });
-            const html = results.map(place => {
+        }
+        const displayResult = (searchQuery, cities) => {
+            const resultPlaces = searchResults(searchQuery, cities);
+
+            const html = resultPlaces.map(place => {
                 const regex = new RegExp(searchQuery, 'gi');
                 const cityName = place.city.replace(regex, `<span class="hl">${searchQuery}</span>`);
                 const stateName = place.state.replace(regex, `<span class="hl">${searchQuery}</span>`);
@@ -41,8 +35,14 @@
                             <span class="population">${place.population}</span>
                         </li>`;
             }).join('');
-
             document.querySelector('.suggestions').innerHTML = html;
+        }
+
+        const searchHandler = (e) => {
+            const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+            fetch(endpoint)
+                .then(data => data.json())
+                .then(data => displayResult(e.target.value, data));
         }
 
         const searchInputSelector = document.querySelector('.search');
